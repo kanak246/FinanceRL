@@ -1,5 +1,8 @@
-yfinance
-pandas
 numpy
+pandas
+matplotlib
 tensorflow
-quantstats
+yfinance
+scikit-learn
+quantstats 
+IPython
