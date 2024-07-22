@@ -6,8 +6,6 @@ from tensorflow import Dense, LSTM
 
 
 #need to declare sequential, dense, and lstm models 
-
-
 def create_model(input_shape):
     model = Sequential([
         LSTM(50, return_sequences=True, input_shape=input_shape),
