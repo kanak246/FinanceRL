@@ -1,26 +1,15 @@
-from scripts.data_collection import collect_stock_data
-from scripts.data_cleaning import clean_stock_data
-from scripts.model_setup import create_model
-from scripts.trading import TradingStrategy, execute_trading_strategy
-from scripts.training_backtesting import train_model, backtest_strategy
-from scripts.performance_evaluation import evaluate_performance
+# main.py
+
+from scripts import data_collection, data_processing, model_training, trading
+from scripts.performance_eval import evaluate_performance, generate_sample_returns
 from config import STOCK_TICKERS, START_DATE, END_DATE
 
 if __name__ == "__main__":
-    # Data collection and cleaning
-    raw_data = collect_stock_data(STOCK_TICKERS, START_DATE, END_DATE)
+    data_collection.collect_stock_data()
+    data_processing.process_data()
     for ticker in STOCK_TICKERS:
-        clean_stock_data(ticker)
+        model_training.train_lstm_model(ticker)
+    trading.execute_trades()
 
-    # Model setup
-    model = create_model(input_shape=(None, 5))
-
-    # Training and backtesting
-    # Assuming `train_data`, `train_labels`, `test_data`, `test_labels` are prepared
-    train_model(model, train_data, train_labels)
-    strategy = TradingStrategy(model)
-    accuracy = backtest_strategy(strategy, test_data, test_labels)
-
-    # Performance evaluation
-    # Assuming `returns` is prepared
-    evaluate_performance(returns)
+    sample_returns = generate_sample_returns()
+    evaluate_performance(sample_returns, output_file='trading_performance_report.html')
