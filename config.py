@@ -1,5 +1,3 @@
 # config.py
 
-STOCK_TICKERS = ['AAPL', 'MSFT', 'GOOG']
-START_DATE = '2019-01-01'
-END_DATE = '2021-01-01'
+BOND_DATA_PATH = "/Users/kanakgarg/Desktop/Kanak/FinanceRL/data/raw/aggregated_bond_data.csv"
