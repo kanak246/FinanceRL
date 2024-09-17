@@ -53,7 +53,7 @@ def predict_for_next_day(df, target_date):
         # Unscale the prediction to get it back to the original range
         predicted_yield = y_scaler.inverse_transform(predicted_yield_scaled.reshape(-1, 1))[0][0]
         
-        previous_yield = bond_data['volume_weighted_yield'].iloc[-1]
+        previous_yield = bond_data['volume_weighted_yield'].iloc[-1] #grab the last known yield value to calculate percentage change 
         
         # Determine the direction of change (up or down)
         direction = 'up' if predicted_yield > previous_yield else 'down'
@@ -70,5 +70,5 @@ def predict_for_next_day(df, target_date):
     predictions_df['trd_exctn_dt'] = target_date  # Set the target date for prediction
     predictions_df.to_csv(os.path.join(input_dir, f'predictions_{target_date}.csv'), index=False)
     print(f"Predictions saved for {target_date} in {input_dir}.")
-
+    print("test")
     return predictions_df
