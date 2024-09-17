@@ -70,5 +70,5 @@ def predict_for_next_day(df, target_date):
     predictions_df['trd_exctn_dt'] = target_date  # Set the target date for prediction
     predictions_df.to_csv(os.path.join(input_dir, f'predictions_{target_date}.csv'), index=False)
     print(f"Predictions saved for {target_date} in {input_dir}.")
-    print("test")
+    
     return predictions_df
