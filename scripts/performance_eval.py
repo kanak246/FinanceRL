@@ -1,21 +1,24 @@
-# performance_eval.py
-
 import quantstats as qs
 import pandas as pd
 import numpy as np
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-def evaluate_performance(returns, output_file='report.html'):
-    # Generate an HTML report for the given returns
-    qs.reports.html(returns, output=output_file)
+def evaluate_performance(actual_yields, predicted_yields, output_file='report.html'):
+    mse = mean_squared_error(actual_yields, predicted_yields)
+    mae = mean_absolute_error(actual_yields, predicted_yields)
+    r2 = r2_score(actual_yields, predicted_yields)
 
-def generate_sample_returns():
-    # Generating a sample returns series for demonstration purposes
-    np.random.seed(42)
-    dates = pd.date_range(start='2020-01-01', end='2023-01-01')
-    sample_returns = np.random.normal(0, 0.01, len(dates))
-    returns = pd.Series(sample_returns, index=dates)
-    return returns
+    print(f"Mean Squared Error (MSE): {mse}")
+    print(f"Mean Absolute Error (MAE): {mae}")
+    print(f"R-squared (R2): {r2}")
+    
+    # Create a DataFrame to hold actual and predicted yields
+    performance_data = pd.DataFrame({
+        'actual_yield': actual_yields,
+        'predicted_yield': predicted_yields
+    }, index=actual_yields.index)
 
-if __name__ == "__main__":
-    returns = generate_sample_returns()
-    evaluate_performance(returns)
+    # QuantStats requires a returns series, so we treat yields as returns for reporting purposes
+    qs.reports.html(performance_data['predicted_yield'], 
+                    benchmark=performance_data['actual_yield'], 
+                    output=output_file)
