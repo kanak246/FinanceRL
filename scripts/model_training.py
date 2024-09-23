@@ -1,20 +1,30 @@
 import os
 import joblib
 import pandas as pd
-from scripts.model_setup import create_model
 from sklearn.preprocessing import StandardScaler
+from scripts.model_setup import create_model 
 
-def train_sgd_model(training_df, target_date, is_incremental=False):
+def train_sgd_model(training_df, target_date, is_Treasury=False, is_incremental=False):
     """
     Train the SGDRegressor model either from scratch or incrementally.
     """
     model_dir = os.path.join(os.path.dirname(__file__), '..', 'models')
-    model_file = os.path.join(model_dir, 'sgd_bond_yield_model.pkl')
-    X_scaler_file = os.path.join(model_dir, 'X_scaler.pkl')
-    y_scaler_file = os.path.join(model_dir, 'y_scaler.pkl')
+
+    if is_Treasury:
+        model_file = os.path.join(model_dir, 'sgd_treasury_yield_model.pkl')
+        X_scaler_file = os.path.join(model_dir, 'X_scaler_treasury.pkl')
+        y_scaler_file = os.path.join(model_dir, 'y_scaler_treasury.pkl')
+    else:
+        model_file = os.path.join(model_dir, 'sgd_bond_yield_model.pkl')
+        X_scaler_file = os.path.join(model_dir, 'X_scaler.pkl')
+        y_scaler_file = os.path.join(model_dir, 'y_scaler.pkl')
 
     # Feature and target extraction
-    X_train = training_df[['bond_sym_id_encoded', 'total_daily_volume', 'time_to_maturity']]
+    if is_Treasury:
+        X_train = training_df[['time_to_maturity']]  # Treasury only has 'time_to_maturity'
+    else:
+        X_train = training_df[['bond_sym_id_encoded', 'total_daily_volume', 'time_to_maturity']]
+    
     y_train = training_df['volume_weighted_yield'].values.reshape(-1, 1)  # Reshape for scaling
 
     # Initialize or load the existing model
@@ -24,7 +34,7 @@ def train_sgd_model(training_df, target_date, is_incremental=False):
         y_scaler = joblib.load(y_scaler_file)
         print("Loaded existing model and scalers for incremental training...")
     else:
-        model = create_model()  #Create Model from model_setup page 
+        model = create_model()
         X_scaler = StandardScaler()
         y_scaler = StandardScaler()
 
