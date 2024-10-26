@@ -60,3 +60,4 @@ if __name__ == "__main__":
 print(f"Performing cross-validation for {model_type} model...")
 cv_mse = model_training.cross_validate_model(X_train, y_train, model_type=model_type)
 print(f"Cross-Validation MSE ({model_type}): {cv_mse}")
+print("tst")
