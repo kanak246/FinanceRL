@@ -64,6 +64,7 @@ def load_and_preprocess_data(input_file, target_date, is_Treasury=False):
 
     return df, training_df
 
+
 def compare_actual_vs_predicted(df, target_date, predictions_df, is_Treasury=False):
     """
     Compare actual volume-weighted yields with predicted yields for a given target date.
@@ -83,8 +84,19 @@ def compare_actual_vs_predicted(df, target_date, predictions_df, is_Treasury=Fal
     actual_df = df[df[date_column] == target_date][[bond_id_column, 'volume_weighted_yield']].copy()
     actual_df.rename(columns={'volume_weighted_yield': 'volume_weighted_yield_actual'}, inplace=True)
 
+    # Debugging: Check if volume_weighted_yield_actual exists in actual_df
+    print("Columns in actual_df:", actual_df.columns)
+    print("Number of rows in actual_df:", len(actual_df))
+
     # Merge the actual and predicted dataframes based on bond or Treasury identifier
     comparison_df = pd.merge(actual_df, predictions_df, left_on=bond_id_column, right_on='bond_sym_id', how='left')
+
+    # Check for multiple columns with 'volume_weighted_yield_actual'
+    if 'volume_weighted_yield_actual_x' in comparison_df.columns and 'volume_weighted_yield_actual_y' in comparison_df.columns:
+        print("Merging created multiple columns for 'volume_weighted_yield_actual'. Keeping '_x' version.")
+        # You can choose to drop one or rename
+        comparison_df['volume_weighted_yield_actual'] = comparison_df['volume_weighted_yield_actual_x']
+        comparison_df.drop(['volume_weighted_yield_actual_x', 'volume_weighted_yield_actual_y'], axis=1, inplace=True)
 
     # Calculate the error between actual and predicted yields
     comparison_df['error'] = comparison_df.apply(
@@ -95,4 +107,6 @@ def compare_actual_vs_predicted(df, target_date, predictions_df, is_Treasury=Fal
     )
 
     return comparison_df
+
+
 
